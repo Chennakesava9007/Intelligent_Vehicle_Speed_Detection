@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <h2 class="fw-bold mb-3">
+                <i class="bi bi-clock-history"></i> My Dashboard
+            </h2>
+        </div>
+    </div>
+    <div class="row">
+        {% if videos %}
+            {% for video in videos %}
+                <div class="col-md-6 col-lg-4 mb-4 d-flex align-items-stretch">
+                    <div class="card shadow w-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-2">
+                                <i class="bi bi-file-earmark-text"></i>
+                                <span class="text-primary">{{ video.title|truncatechars:25 }}</span>
+                            </h5>
+                            <p class="mb-1 small text-muted">
+                                Uploaded: {{ video.uploaded_at|date:"M d, Y" }}<br>
+                                Time: {{ video.uploaded_at|date:"H:i" }}
+                            </p>
+                            <span class="badge {% if video.processed %}bg-success{% else %}bg-warning text-dark{% endif %} mb-2">
+                                {{ video.processed|yesno:"Processed,Pending" }}
+                            </span>
+                            <div class="mt-2">
+                                {% if video.processed %}
+                                    <a href="{% url 'view_results' video.id %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    {% if video.result_file %}
+                                        <a href="{{ video.result_file.url }}" class="btn btn-outline-success btn-sm">Download Video</a>
+                                    {% endif %}
+                                {% else %}
+                                    <button disabled class="btn btn-outline-primary btn-sm">Processing...</button>
+                                {% endif %}
+                                <a href="{% url 'delete_video' video.id %}" class="btn btn-danger btn-sm ms-2">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info shadow-sm">
+                    <i class="bi bi-info-circle"></i> No uploads yet. Click "Upload Video" to get started!
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

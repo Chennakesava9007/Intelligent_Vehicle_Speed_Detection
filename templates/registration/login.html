@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card p-4 shadow-lg border-0 mt-5" style="background: linear-gradient(135deg, #7579ff 0%, #b224ef 100%); color:white;">
+      <h2 class="fw-bold mb-4 text-center">Welcome Back</h2>
+      <form method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-light w-100 py-2 fw-bold">Sign In</button>
+      </form>
+      <div class="text-center mt-4">Don't have an account? <a href="{% url 'signup' %}" class="text-white text-decoration-underline">Sign Up</a></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card shadow-lg border-0 p-5 mx-auto" style="max-width:650px;">
+  <h2 class="fw-bold mb-3 text-center">Upload Traffic Video</h2>
+  <form method="POST" enctype="multipart/form-data" class="mb-4">{% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">Video Title</label>
+      <input type="text" name="title" class="form-control" placeholder="Enter a descriptive title" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Video File</label>
+      <input type="file" name="video" accept="video/mp4,video/avi,video/mov" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary w-100 py-2">Upload Video</button>
+  </form>
+  <div class="alert alert-info text-center">Supported formats: <b>MP4, AVI, MOV</b>. <br>Max size: <b>500MB</b>.</div>
+  <div class="mt-4">
+    <h5>What happens after upload?</h5>
+    <ol>
+      <li>Upload: Video is stored securely.</li>
+      <li>Process: AI analyzes speed & plates.</li>
+      <li>Results: Check your dashboard.</li>
+    </ol>
+  </div>
+</div>
+{% endblock %}

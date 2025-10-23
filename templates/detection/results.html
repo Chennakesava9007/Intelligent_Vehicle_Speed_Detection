@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+  <div class="col-md-8">
+    <div class="alert alert-info mb-3">
+      <b>Download Instructions:</b> Click download to save your processed video. Use your preferred video player to view.
+    </div>
+    <h3 class="mb-3"><i class="bi bi-car-front"></i> Detection Results</h3>
+    <table class="table table-bordered table-hover shadow-sm align-middle">
+      <thead class="table-primary">
+        <tr>
+          <th># Frame</th>
+          <th>Vehicle ID</th>
+          <th>Speed</th>
+          <th>Plate</th>
+          <th>Status</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in violations %}
+        <tr class="{% if v.speed > 80 %}table-danger{% else %}table-success{% endif %}">
+          <td>{{ v.frame_id }}</td>
+          <td>{{ v.vehicle }}</td>
+          <td><b>{{ v.speed|floatformat:1 }}</b> km/h{% if v.speed > 80 %} <span class="badge bg-danger">OVER</span>{% endif %}</td>
+          <td><span class="badge bg-dark">{{ v.plate|default:"-" }}</span></td>
+          <td>
+            {% if v.speed > 80 %}
+              <span class="badge bg-danger"><i class="bi bi-exclamation-triangle"></i> Overspeed</span>
+            {% else %}
+              <span class="badge bg-success">Normal</span>
+            {% endif %}
+          </td>
+          <td><i class="bi bi-calendar"></i> {{ v.timestamp|date:"M d, Y H:i:s" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center">No violations found for this video.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p class="small text-muted">Showing first 50 results. <a href="{% url 'download_csv' %}">Download CSV</a> for complete data.</p>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow mb-4">
+      <div class="card-body">
+        <h4 class="fw-bold mb-2">Video Information</h4>
+        {% if video %}
+        <p><b>Title:</b> {{ video.title }}</p>
+        <p><b>Uploaded:</b> {{ video.uploaded_at|date:"M d, Y H:i" }}</p>
+        <p><b>Status:</b>
+          {% if video.processed %}
+            <span class="badge bg-success">Processed</span>
+          {% else %}
+            <span class="badge bg-warning text-dark">Pending</span>
+          {% endif %}
+        </p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card shadow mb-4">
+      <div class="card-body">
+        <h4 class="fw-bold mb-2">Actions</h4>
+        {% if video and video.result_file %}
+          <a href="{{ video.result_file.url }}" class="btn btn-primary w-100 mb-2">Download Video</a>
+        {% else %}
+          <button class="btn btn-secondary w-100 mb-2" disabled>Download N/A</button>
+        {% endif %}
+        <a href="{% url 'download_csv' %}" class="btn btn-success w-100 mb-2">Download CSV Report</a>
+        {% if video %}
+          <a href="{% url 'delete_video' video.id %}" class="btn btn-outline-danger w-100">Delete Video</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card shadow">
+      <div class="card-body">
+        <h4 class="fw-bold mb-2">Video Statistics</h4>
+        <p><i class="bi bi-car-front"></i> <b>{{ total_violations }}</b> Frames Detected</p>
+        <p class="mb-1">
+          <span class="text-danger"><b>{{ overspeed_count }}</b> Overspeed</span>
+          | <span class="text-success"><b>{{ normal_count }}</b> Normal Speed</span>
+        </p>
+        <h4 class="mb-0 text-primary"><i class="bi bi-speedometer2"></i> {{ avg_speed }} km/h <span class="small"> (Average Speed)</span></h4>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
